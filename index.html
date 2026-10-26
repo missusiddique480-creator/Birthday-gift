@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday 🎂</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      font-family: "Trebuchet MS", sans-serif;
+      background: linear-gradient(135deg, #ffc4df, #d8c5ff, #b9e7ff);
+      padding: 20px;
+    }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 520px;
+      padding: 45px 28px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.78);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(123, 64, 135, 0.2);
+      backdrop-filter: blur(12px);
+      animation: appear 1s ease;
+    }
+
+    .cake {
+      font-size: 75px;
+      display: inline-block;
+      animation: bounce 2s infinite;
+    }
+
+    .small-title {
+      margin-top: 18px;
+      color: #a34a85;
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 15px 0;
+      color: #9d3c80;
+      font-family: Georgia, serif;
+      font-size: clamp(35px, 8vw, 55px);
+      line-height: 1.15;
+    }
+
+    h1 span {
+      color: #e95d9d;
+    }
+
+    .name {
+      color: #7438a5;
+      font-size: clamp(25px, 6vw, 34px);
+      font-family: Georgia, serif;
+      font-style: italic;
+      margin: 20px 0;
+    }
+
+    .message {
+      max-width: 390px;
+      margin: 0 auto;
+      color: #62516a;
+      font-size: 16px;
+      line-height: 1.9;
+    }
+
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: #ef8bb8;
+      border-radius: 10px;
+      margin: 25px auto;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      margin-top: 28px;
+      padding: 15px 27px;
+      background: linear-gradient(135deg, #f16aa7, #a45be0);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(194, 77, 164, 0.3);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    button:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 25px rgba(194, 77, 164, 0.4);
+    }
+
+    .footer {
+      margin-top: 25px;
+      color: #a36a99;
+      font-size: 13px;
+    }
+
+    .heart {
+      position: fixed;
+      bottom: -40px;
+      pointer-events: none;
+      z-index: 1;
+      animation: floatUp linear forwards;
+    }
+
+    #confetti {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(35px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) rotate(-5deg); }
+      50% { transform: translateY(-12px) rotate(5deg); }
+    }
+
+    @keyframes floatUp {
+      to {
+        transform: translateY(-115vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 14px;
+      }
+
+      .card {
+        padding: 35px 20px;
+        border-radius: 24px;
+      }
+
+      .cake {
+        font-size: 62px;
+      }
+
+      .message {
+        font-size: 14px;
+      }
+
+      button {
+        padding: 14px 22px;
+        font-size: 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confetti"></canvas>
+
+  <main class="card">
+    <div class="cake">🎂</div>
+
+    <p class="small-title">A Special Day For Someone Special</p>
+
+    <h1>Happy<br><span>Birthday!</span></h1>
+
+    <!-- Change the name below -->
+    <div class="name">Dear Bestie 💗</div>
+
+    <div class="divider"></div>
+
+    <p class="message">
+      May your birthday be filled with endless smiles,
+      beautiful surprises, and unforgettable memories.
+      ✨
+
+      May all your dreams come true, your heart stay
+      happy, and your life shine brighter every day.
+      You deserve all the love and happiness in the world!
+    </p>
+
+    <button id="celebrate">🎉 Celebrate Your Day!</button>
+
+    <p class="footer">Made with 💖 just for you</p>
+  </main>
+
+  <script>
+    // Confetti animation
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+
+    let particles = [];
+    let animationId;
+    let running = false;
+
+    const colors = [
+      "#ff5c9a", "#ffd166", "#a66cff",
+      "#64d8cb", "#ff8c69", "#ffffff"
+    ];
+
+    function resizeCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function burst(x, y, amount = 120) {
+      for (let i = 0; i < amount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 7;
+
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 2,
+          size: 3 + Math.random() * 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          spin: (Math.random() - 0.5) * 12,
+          life: 100 + Math.random() * 60
+        });
+      }
+
+      if (!running) {
+        running = true;
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      particles = particles.filter(p => p.life > 0);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.12;
+        p.vx *= 0.99;
+        p.rotation += p.spin;
+        p.life--;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.min(1, p.life / 25);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 1.5);
+        ctx.restore();
+      }
+
+      if (particles.length > 0) {
+        animationId = requestAnimationFrame(animateConfetti);
+      } else {
+        running = false;
+        cancelAnimationFrame(animationId);
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      }
+    }
+
+    // Floating hearts
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = ["💗", "💕", "✨", "💖"][
+        Math.floor(Math.random() * 4)
+      ];
+
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = 15 + Math.random() * 20 + "px";
+      heart.style.animationDuration = 5 + Math.random() * 5 + "s";
+
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 10000);
+    }
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (!reducedMotion) {
+      setInterval(createHeart, 800);
+
+      // A little confetti when the page opens
+      setTimeout(() => {
+        burst(window.innerWidth / 2, window.innerHeight * 0.3, 100);
+      }, 700);
+    }
+
+    // Celebrate button
+    document.getElementById("celebrate").addEventListener("click", () => {
+      burst(window.innerWidth * 0.25, window.innerHeight * 0.45, 100);
+      burst(window.innerWidth * 0.75, window.innerHeight * 0.45, 100);
+      burst(window.innerWidth / 2, window.innerHeight * 0.3, 140);
+
+      if (!reducedMotion) {
+        for (let i = 0; i < 10; i++) {
+          setTimeout(createHeart, i * 150);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
